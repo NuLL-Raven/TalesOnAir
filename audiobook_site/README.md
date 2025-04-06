@@ -1,6 +1,6 @@
-👨‍💻 Author
-Dela - [DelaTech]
-xkhalil - [Khalil]
+# 👨‍💻 Author
+**Dela** - [DelaTech]
+**xkhalil** - [Khalil]
 Computer Science Student | Web Developer
 
 # Audiobook and PDF Books Website
