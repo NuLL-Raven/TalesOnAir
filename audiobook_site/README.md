@@ -32,7 +32,7 @@ This project is a Django-based web application designed to create a platform for
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/yourusername/audiobook-site.git
+git clone https://github.com/NuLL-Raven/TalesOnAir.git
 ```
 
 2. **Navigate to the project directory**:
