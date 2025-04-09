@@ -1,33 +1,28 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import get_user_model, authenticate
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 
-User = get_user_model()
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(required=True)
 
-class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
-        fields = ('username', 'email')
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Username already exists.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Email already registered.")
+        return email
 
 
-class EmailOrUsernameAuthenticationForm(AuthenticationForm):
-    username = forms.CharField(label="Username or Email")
-
-    def clean(self):
-        username_or_email = self.cleaned_data.get('username')
-        password = self.cleaned_data.get('password')
-
-        # Try to get user by username or email
-        user = User.objects.filter(email=username_or_email).first()
-        if user:
-            username = user.username
-        else:
-            username = username_or_email
-
-        self.user_cache = authenticate(self.request, username=username, password=password)
-
-        if self.user_cache is None:
-            raise forms.ValidationError("Invalid credentials")
-
-        self.confirm_login_allowed(self.user_cache)
-        return self.cleaned_data
+class LoginForm(forms.Form):
+    identifier = forms.CharField(label="Username or Email")
+    password = forms.CharField(widget=forms.PasswordInput)

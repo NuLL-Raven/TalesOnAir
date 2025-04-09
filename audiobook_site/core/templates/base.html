@@ -15,11 +15,10 @@
                 <button type="submit">Logout</button>
             </form>
         {% else %}
-            <a href="{% url 'sign_in' %}">Sign In</a>
-            <a href="{% url 'sign_up' %}">Sign Up</a>
+            <a href="{% url 'authenticate' %}">Authenticate</a>
         {% endif %}
-    </nav>
 
+    </nav>
 
     <hr>
 
