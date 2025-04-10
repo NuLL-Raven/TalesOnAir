@@ -59,6 +59,25 @@ def authenticate_view(request):
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid 2FA code.'})
 
+        elif action == 'register':
+            username = data.get('username')
+            email = data.get('email')
+            password1 = data.get('password1')
+            password2 = data.get('password2')
+
+            if password1 != password2:
+                return JsonResponse({'success': False, 'error': 'Passwords do not match.'})
+            if len(password1) < 8:
+                return JsonResponse({'success': False, 'error': 'Password must be at least 8 characters.'})
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'success': False, 'error': 'Username already exists.'})
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'error': 'Email already registered.'})
+
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            login(request, user)
+            return JsonResponse({'success': True})
+
     return render(request, 'users/login_register.html')
 
 
