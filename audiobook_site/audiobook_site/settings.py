@@ -136,6 +136,7 @@ LOGOUT_REDIRECT_URL = '/users/sign-in/'
 
 
 SITE_ID = 1
+SITE_URL = 'http://127.0.0.1:8000'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'no-reply@talesonair.com'
