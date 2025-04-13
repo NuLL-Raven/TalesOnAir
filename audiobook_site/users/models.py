@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from core.models import AudioBook  # Changed import path to 'core.models'
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
@@ -20,7 +21,9 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     subscription = models.ForeignKey('Subscription', on_delete=models.SET_NULL, null=True, blank=True)
-
+    bio = models.TextField(blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    profile_pic = models.ImageField(upload_to='profiles/', default='profiles/default.jpg')
     objects = UserManager()
 
     def __str__(self):
@@ -41,3 +44,17 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.type} Subscription ({self.subscription_id})"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    display_name = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True, default='profile_pictures/default_profile_picture.jpg')
+    total_listening_time = models.PositiveIntegerField(default=0)
+    completed_audiobooks = models.ManyToManyField(AudioBook, blank=True)
+    current_streak = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
+

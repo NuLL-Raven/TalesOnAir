@@ -2,28 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AudioBook Platform{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <nav>
-        <a href="{% url 'home' %}">Home</a>
-
-        {% if user.is_authenticated %}
-            <span>Welcome, {{ user.username }}!</span>
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        {% else %}
-            <a href="{% url 'authenticate' %}">Authenticate</a>
-        {% endif %}
-
-    </nav>
-
-    <hr>
-
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+<body class="bg-black text-white h-screen flex flex-col transition-all duration-300 ease-in-out">
+    {% block content %}{% endblock %}
 </body>
 </html>

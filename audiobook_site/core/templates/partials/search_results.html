@@ -1,0 +1,22 @@
+{% load static %}
+{% if books %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+    {% for book in books %}
+      <div class="bg-[#1e1e1e] rounded-lg shadow-lg overflow-hidden">
+        {% if book.image %}
+          <img src="{{ book.image.url }}" alt="{{ book.title }}" class="w-full h-48 object-cover">
+        {% else %}
+          <img src="{% static 'images/default_profile_picture.jpg' %}" alt="Placeholder" class="w-full h-48 object-cover">
+        {% endif %}
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-[#c4a381]">{{ book.title }}</h3>
+          <p class="text-sm text-gray-400">{{ book.artist }}</p> <!-- Corrected to artist -->
+          <p class="text-sm text-gray-300 mt-2">{{ book.genre }}</p> <!-- Show genre -->
+          <p class="text-sm text-gray-300 mt-1">{{ book.language }}</p> <!-- Show language -->
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-center text-gray-400">No books found.</p>
+{% endif %}

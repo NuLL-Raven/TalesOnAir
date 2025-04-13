@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile | {{ user.username }}{% endblock %}
+
+{% block content %}
+<body class="bg-black text-white h-screen flex flex-col transition-all duration-300 ease-in-out">
+   <header class="bg-[#1e1e1e] px-4 py-3 flex justify-between items-center shadow-md text-[#f5f0eb]">
+    <nav class="flex items-center space-x-6">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2 text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9.5l9-7 9 7V21a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V9.5z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4.5v15M4.5 12h15"/></svg>
+            <span>Discover</span>
+        </a>
+        <a href="/search/" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>
+            <span>Search</span>
+        </a>
+    </nav>
+
+    <div class="flex items-center space-x-4">
+        <h1 class="text-xl font-bold flex items-center space-x-1 text-white">
+            <span>TalesOnAir</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4v17.5a.5.5 0 0 0 .8.4L12 18l5.2 3.9a.5.5 0 0 0 .8-.4V4H6z"/></svg>
+        </h1>
+
+        {% if user.is_authenticated %}
+            <!-- Logout Button -->
+            <a href="{% url 'logout' %}" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Logout</span>
+            </a>
+
+            <a href="{% url 'profile_view' %}" class="w-8 h-8 rounded-full overflow-hidden border border-white">
+                <img src="{{ user.profile.profile_picture.url }}" alt="profile" class="w-full h-full object-cover">
+            </a>
+        {% else %}
+            <!-- Authenticate Button -->
+            <a href="/authenticate/" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Authenticate</span>
+            </a>
+        {% endif %}
+
+        <a href="#" class="hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"/></svg>
+        </a>
+    </div>
+</header>
+
+
+
+<main class="p-8 flex justify-center items-center h-screen bg-[#0e0e0e]">
+  <div class="w-full max-w-3xl bg-[#2c2c2c] text-[#c4a381] p-8 rounded-xl shadow-2xl">
+    <h2 class="text-4xl font-bold mb-6 text-center text-[#c4a381]">Edit Profile</h2>
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="profile_picture" class="block text-lg font-semibold text-[#c4a381]">Profile Picture</label>
+          <input type="file" name="profile_picture" id="profile_picture" class="w-full mt-2 p-2 bg-[#3a3a3a] text-[#c4a381] rounded-md">
+        </div>
+        <div>
+          <label for="display_name" class="block text-lg font-semibold text-[#c4a381]">Display Name</label>
+          <input type="text" name="display_name" id="display_name" value="{{ profile.display_name|default:'' }}"
+                 placeholder="Enter your display name"
+                 class="w-full mt-2 p-2 bg-[#3a3a3a] text-[#c4a381] rounded-md">
+        </div>
+      </div>
+
+      <div>
+        <label for="bio" class="block text-lg font-semibold text-[#c4a381]">Bio</label>
+        <textarea name="bio" id="bio" rows="4"
+                  placeholder="Write a short bio about yourself..."
+                  class="w-full mt-2 p-2 bg-[#3a3a3a] text-[#c4a381] rounded-md">{{ profile.bio |default:''  }}</textarea>
+      </div>
+
+      <div>
+        <label for="location" class="block text-lg font-semibold text-[#c4a381]">Location</label>
+        <input type="text" name="location" id="location" value="{{ profile.location |default:''  }}"
+               placeholder="Enter your location"
+               class="w-full mt-2 p-2 bg-[#3a3a3a] text-[#c4a381] rounded-md">
+      </div>
+
+      <button type="submit" class="bg-[#c4a381] text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#b0936d] transition-all">Save Changes</button>
+    </form>
+  </div>
+</main>
+{% endblock %}

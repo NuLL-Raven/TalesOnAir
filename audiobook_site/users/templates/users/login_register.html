@@ -102,5 +102,64 @@
     </div>
 
     <script src="{% static 'users/script.js' %}"></script>
+
+
+<script>
+    document.getElementById("send-code-btn").addEventListener("click", function () {
+        const form = document.getElementById("login-form");
+        const username = form.username.value;
+        const password = form.password.value;
+
+        fetch("/authenticate/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                action: "send_2fa_code",
+                username: username,
+                password: password
+            })
+        }).then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  document.getElementById("code-status").innerText = "2FA Code sent to your email (or check console).";
+              } else {
+                  document.getElementById("login-error-box").innerText = data.error;
+              }
+          });
+    });
+
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const form = this;
+        const username = form.username.value;
+        const password = form.password.value;
+        const code = form.code.value;
+
+        fetch("/authenticate/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                action: "verify_2fa",
+                username: username,
+                password: password,
+                code: code
+            })
+        }).then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  window.location.href = "/home/"; // or wherever you want
+              } else {
+                  document.getElementById("login-error-box").innerText = data.error;
+              }
+          });
+    });
+</script>
+
 </body>
 </html>

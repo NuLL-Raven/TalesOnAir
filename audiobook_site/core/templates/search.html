@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search</title>
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white">
+
+  <body class="bg-black text-white h-screen flex flex-col transition-all duration-300 ease-in-out">
+    <header class="bg-[#1e1e1e] px-4 py-3 flex justify-between items-center shadow-md text-[#f5f0eb]">
+    <nav class="flex items-center space-x-6">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2 text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9.5l9-7 9 7V21a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V9.5z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4.5v15M4.5 12h15"/></svg>
+            <span>Discover</span>
+        </a>
+        <a href="/search/" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>
+            <span>Search</span>
+        </a>
+    </nav>
+
+    <div class="flex items-center space-x-4">
+        <h1 class="text-xl font-bold flex items-center space-x-1 text-white">
+            <span>TalesOnAir</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4v17.5a.5.5 0 0 0 .8.4L12 18l5.2 3.9a.5.5 0 0 0 .8-.4V4H6z"/></svg>
+        </h1>
+
+        {% if user.is_authenticated %}
+            <!-- Logout Button -->
+            <a href="{% url 'logout' %}" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Logout</span>
+            </a>
+
+            <a href="{% url 'profile_view' %}" class="w-8 h-8 rounded-full overflow-hidden border border-white">
+                <img src="{{ user.profile.profile_picture.url }}" alt="profile" class="w-full h-full object-cover">
+            </a>
+        {% else %}
+            <!-- Authenticate Button -->
+            <a href="/authenticate/" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Authenticate</span>
+            </a>
+        {% endif %}
+
+        <a href="#" class="hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"/></svg>
+        </a>
+    </div>
+</header>
+
+
+
+  <div class="flex min-h-screen">
+    <div class="w-64 bg-black p-6 sticky top-0 h-screen overflow-y-auto border-r border-gray-800">
+      <div class="mb-4">
+        <input type="text" id="search-input" name="q" value="{{ query }}" placeholder="Start typing..." class="w-full p-2 rounded border border-gray-700 bg-[#2c2c2c] text-white placeholder-gray-400">
+      </div>
+
+      <h2 class="font-semibold mb-2 text-[#c4a381]">Genres</h2>
+      {% for key, label in genre_choices %}
+        <div class="mb-1">
+          <input type="checkbox" name="genre" value="{{ key }}" class="filter-checkbox" id="genre_{{ key }}">
+          <label for="genre_{{ key }}" class="text-gray-300">{{ label }}</label>
+        </div>
+      {% endfor %}
+
+      <h2 class="font-semibold mt-4 mb-2 text-[#c4a381]">Languages</h2>
+      {% for lang in language_choices %}
+        <div class="mb-1">
+          <input type="checkbox" name="language" value="{{ lang }}" class="filter-checkbox" id="lang_{{ lang }}">
+          <label for="lang_{{ lang }}" class="text-gray-300">{{ lang }}</label>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="flex-1 p-6 bg-black">
+      <div id="search-results">
+        {% include 'partials/search_results.html' %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getFilters() {
+      const query = document.getElementById("search-input").value;
+      const genres = Array.from(document.querySelectorAll('input[name="genre"]:checked')).map(cb => cb.value);
+      const languages = Array.from(document.querySelectorAll('input[name="language"]:checked')).map(cb => cb.value);
+
+      const params = new URLSearchParams();
+      if (query) params.append('q', query);
+      genres.forEach(genre => params.append('genre', genre));
+      languages.forEach(lang => params.append('language', lang));
+
+      fetch(`/search/?${params.toString()}`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('search-results').innerHTML = data.html;
+        });
+    }
+
+    document.getElementById("search-input").addEventListener("input", getFilters);
+    document.querySelectorAll(".filter-checkbox").forEach(cb => {
+      cb.addEventListener("change", getFilters);
+    });
+  </script>
+</body>
+</html>

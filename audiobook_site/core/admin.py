@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from core.models import AudioBook
+
+
+@admin.register(AudioBook)
+class AudioAdmin(admin.ModelAdmin):
+    list_display = ('title', 'artist', 'audio_file')

@@ -1,7 +1,10 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from .models import Profile
+
+User = get_user_model()
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -26,3 +29,13 @@ class SignUpForm(UserCreationForm):
 class LoginForm(forms.Form):
     identifier = forms.CharField(label="Username or Email")
     password = forms.CharField(widget=forms.PasswordInput)
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'bio', 'location', 'profile_pic']
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['display_name', 'bio', 'location', 'profile_picture']

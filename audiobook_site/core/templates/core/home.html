@@ -1,8 +1,395 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TalesOnAir</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* REMOVE or COMMENT OUT */
+    .hidden-sidebar {
+      width: 0 !important;
+      overflow: hidden;
+      padding: 0 !important;
+    }
 
-{% block title %}Home - TalesOnAir{% endblock %}
+    .expanded-main {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
+    .dropdown-content {
+      display: none;
+    }
+    .dropdown-open .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-black text-[#f5f0eb] h-screen flex flex-col transition-all duration-300 ease-in-out">
+    <header class="bg-[#1e1e1e] px-4 py-3 flex justify-between items-center shadow-md text-[#f5f0eb]">
+    <nav class="flex items-center space-x-6">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2 text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9.5l9-7 9 7V21a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V9.5z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4.5v15M4.5 12h15"/></svg>
+            <span>Discover</span>
+        </a>
+        <a href="/search/" class="flex items-center space-x-2 text-sm font-medium text-white hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>
+            <span>Search</span>
+        </a>
+    </nav>
 
-{% block content %}
-    <h1>Welcome to TalesOnAir</h1>
-    <p>Home page.</p>
-{% endblock %}
+    <div class="flex items-center space-x-4">
+        <h1 class="text-xl font-bold flex items-center space-x-1 text-white">
+            <span>TalesOnAir</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4v17.5a.5.5 0 0 0 .8.4L12 18l5.2 3.9a.5.5 0 0 0 .8-.4V4H6z"/></svg>
+        </h1>
+
+        {% if user.is_authenticated %}
+            <!-- Logout Button -->
+            <a href="{% url 'logout' %}" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Logout</span>
+            </a>
+
+            <a href="{% url 'profile_view' %}" class="w-8 h-8 rounded-full overflow-hidden border border-white">
+                <img src="{{ user.profile.profile_picture.url }}" alt="profile" class="w-full h-full object-cover">
+            </a>
+        {% else %}
+            <!-- Authenticate Button -->
+            <a href="/authenticate/" class="text-sm font-medium text-[#f5f0eb] hover:text-[#d1b49b] transition">
+                <span>Authenticate</span>
+            </a>
+        {% endif %}
+
+        <a href="#" class="hover:text-[#d1b49b] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"/></svg>
+        </a>
+    </div>
+</header>
+
+
+
+  <div class="flex flex-1 overflow-hidden">
+    <aside id="sidebar" class="transition-all duration-500 ease-in-out w-60 bg-black text-[#b8aaa0] p-4 space-y-4 border-r border-gray-800 h-screen">
+      <ul class="space-y-4 text-sm">
+        <li>
+          <a href="#" class="flex items-center space-x-3 hover:text-[#f5f0eb] transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+            </svg>
+            <span>My Library</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="flex items-center space-x-3 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A6.5 6.5 0 0112 3a6.5 6.5 0 0110 5.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span>Liked Books</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="flex items-center space-x-3 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 5v14l7-7 7 7V5z"/></svg>
+            <span>Saves</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="flex items-center space-x-3 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm4 4h8v8H8V8z"/></svg>
+            <span>Folders</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="flex items-center space-x-3 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span>Authors</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+
+    <main id="mainContent" class="transition-all duration-500 ease-in-out flex-1 p-6 overflow-y-auto">
+      <h2 class="text-3xl font-bold mb-6 text-[#d1b49b]">Welcome back</h2>
+
+      <section class="mb-10">
+  <h3 class="text-xl font-semibold mb-4 text-[#d1b49b]">Your Daily Mixes</h3>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    {% for audio in audio_files %}
+      <div class="bg-gradient-to-b from-[#1e1e1e] to-[#2c2c2c] p-4 rounded-lg hover:from-[#2a2a2a] hover:to-[#3a3a3a] transition-all border border-gray-800">
+        <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        <p class="font-semibold text-[#f5f0eb]">{{ audio.title }}</p>
+        <p class="text-sm text-[#a09387]">{{ audio.artist }}</p>
+        <button class="play-audio-btn text-[#c4a381]" data-audio-url="{{ audio.audio_file.url }}" data-title="{{ audio.title }}" data-artist="{{ audio.artist }}" data-image="{{ audio.image_file.url }}">
+          Play Audio
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h3 class="text-xl font-semibold mb-4 text-[#c4a381]">Top Audiobooks</h3>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-4">
+    {% for i in mix_range %}
+      <div class="bg-gradient-to-b from-[#1e1e1e] to-[#2c2c2c] p-4 rounded-lg hover:from-[#2a2a2a] hover:to-[#3a3a3a] transition-all border border-gray-800">
+        <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        <p class="font-semibold text-white">Audiobook {{ i }}</p>
+        <p class="text-sm text-gray-400">Narrator Name</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+    </main>
+  </div>
+
+  <footer class="bg-[#1e1e1e] px-4 py-2 flex items-center justify-between text-white text-sm transition-all">
+    <div class="flex items-center gap-4">
+      <button><i class="fas fa-random text-gray-400 hover:text-white transition"></i></button>
+      <button><i class="fas fa-step-backward text-white"></i></button>
+      <button id="play-pause" class="w-8 h-8 rounded-full bg-[#c4a381] flex items-center justify-center hover:bg-[#d1b49b] transition">
+        <i class="fas fa-play"></i>
+      </button>
+      <button><i class="fas fa-step-forward text-white"></i></button>
+      <button id="repeat-btn"><i class="fas fa-redo text-gray-400 hover:text-white transition"></i></button>
+    </div>
+
+    <div class="flex flex-col items-center flex-1 px-4">
+      <div class="flex items-center space-x-4 w-full max-w-md">
+        <span id="audio-current-time" class="text-xs text-gray-400">0:00</span>
+        <input id="audio-progress" type="range" class="w-full accent-white" value="0" min="0" step="0.01" />
+        <span id="audio-total-duration" class="text-xs text-gray-400">0:00</span>
+      </div>
+      <div class="flex items-center gap-2 mt-1">
+        <div id="audio-image" class="w-8 h-8 bg-gray-700 rounded bg-cover bg-center"></div>
+        <div>
+          <p id="audio-title" class="text-sm font-semibold leading-tight">Now Playing: Title</p>
+          <p id="audio-artist" class="text-xs text-gray-400">Narrator Name</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <i class="fas fa-volume-up text-white"></i>
+      <input id="volume-control" type="range" min="0" max="1" step="0.01" value="1" class="w-20 accent-white">
+      <button><i class="fas fa-heart text-gray-400 hover:text-white transition"></i></button>
+      <button><i class="fas fa-bars text-gray-400 hover:text-white transition"></i></button>
+    </div>
+  </footer>
+
+  <script>
+    function toggleDropdown(btn) {
+      btn.parentElement.classList.toggle('dropdown-open');
+    }
+  </script>
+   <script>
+    let audioPlayer = new Audio();
+    let isPlaying = false;
+    let startTime = 0;
+
+    const progressBar = document.getElementById('audio-progress');
+    const playPauseBtn = document.getElementById("play-pause").querySelector("i");
+    const audioTitle = document.getElementById('audio-title');
+    const audioArtist = document.getElementById('audio-artist');
+    const audioCurrentTime = document.getElementById('audio-current-time');
+    const audioTotalDuration = document.getElementById('audio-total-duration');
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+
+    function updateListeningTime(seconds) {
+      console.log(`User listened for ${seconds} seconds`);
+          fetch('/update-listening-time/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+      body: JSON.stringify({ seconds: seconds })
+    });
+
+    }
+
+    audioPlayer.addEventListener('play', () => {
+      startTime = Date.now();
+    });
+
+    audioPlayer.addEventListener('pause', () => {
+      const seconds = Math.floor((Date.now() - startTime) / 1000);
+      if (seconds > 0) updateListeningTime(seconds);
+    });
+
+    audioPlayer.addEventListener('ended', () => {
+      const seconds = Math.floor((Date.now() - startTime) / 1000);
+      if (seconds > 0) updateListeningTime(seconds);
+    });
+
+    function togglePlayPause() {
+      if (isPlaying) {
+        audioPlayer.pause();
+        playPauseBtn.classList.remove("fa-pause");
+        playPauseBtn.classList.add("fa-play");
+      } else {
+        audioPlayer.play();
+        playPauseBtn.classList.remove("fa-play");
+        playPauseBtn.classList.add("fa-pause");
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function setAudioSource(url, title, artist, imageUrl = null) {
+      audioPlayer.src = url;
+      audioPlayer.load();
+      audioTitle.textContent = `Now Playing: ${title}`;
+      audioArtist.textContent = artist;
+
+      const img = document.getElementById('audio-image');
+      if (imageUrl && img) {
+        img.style.backgroundImage = `url('${imageUrl}')`;
+      }
+
+      audioPlayer.addEventListener('canplay', () => {
+        progressBar.max = audioPlayer.duration;
+        audioTotalDuration.textContent = formatTime(audioPlayer.duration);
+        audioPlayer.play();
+        playPauseBtn.classList.remove("fa-play");
+        playPauseBtn.classList.add("fa-pause");
+        isPlaying = true;
+      }, { once: true });
+    }
+
+    function formatTime(timeInSeconds) {
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+
+    audioPlayer.addEventListener('timeupdate', () => {
+      progressBar.value = audioPlayer.currentTime;
+      audioCurrentTime.textContent = formatTime(audioPlayer.currentTime);
+    });
+
+    progressBar.addEventListener('input', () => {
+      audioPlayer.currentTime = progressBar.value;
+    });
+
+    document.querySelectorAll('.play-audio-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const url = this.dataset.audioUrl;
+        const title = this.dataset.title;
+        const artist = this.dataset.artist;
+        const image = this.dataset.image || null;
+        setAudioSource(url, title, artist, image);
+      });
+    });
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      audioPlayer.volume = this.value;
+    });
+
+    const repeatBtn = document.getElementById("repeat-btn");
+    let repeatMode = false;
+
+    repeatBtn.addEventListener("click", () => {
+      repeatMode = !repeatMode;
+      audioPlayer.loop = repeatMode;
+      repeatBtn.querySelector("i").classList.toggle("text-white", repeatMode);
+      repeatBtn.querySelector("i").classList.toggle("text-gray-400", !repeatMode);
+    });
+
+    document.getElementById("play-pause").addEventListener("click", () => {
+      togglePlayPause();
+    });
+</script>
+
+
+    <button id="hideSidebarBtn"
+      class="fixed left-4 bottom-24 z-50 bg-[#c4a381] hover:bg-[#d1b49b] text-black w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out">
+      <i class="fas fa-angle-left"></i>
+    </button>
+
+    <button id="unhideSidebarBtn"
+      class="fixed left-4 bottom-24 z-50 bg-[#c4a381] hover:bg-[#d1b49b] text-black w-10 h-10 rounded-full shadow-lg flex items-center justify-center hidden transition-all duration-300 ease-in-out">
+      <i class="fas fa-angle-right"></i>
+    </button>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const hideBtn = document.getElementById('hideSidebarBtn');
+      const unhideBtn = document.getElementById('unhideSidebarBtn');
+
+      if (!sidebar || !mainContent || !hideBtn || !unhideBtn) {
+        console.error("Sidebar or buttons not found");
+        return;
+      }
+
+      hideBtn.addEventListener('click', () => {
+        sidebar.classList.add('hidden-sidebar');
+        mainContent.classList.add('expanded-main');
+        hideBtn.classList.add('hidden');
+        unhideBtn.classList.remove('hidden');
+      });
+
+      unhideBtn.addEventListener('click', () => {
+        sidebar.classList.remove('hidden-sidebar');
+        mainContent.classList.remove('expanded-main');
+        hideBtn.classList.remove('hidden');
+        unhideBtn.classList.add('hidden');
+      });
+    });
+  </script>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    let isHidden = false;
+
+    toggleBtn.addEventListener('click', () => {
+      if (!isHidden) {
+        sidebar.classList.remove('w-60', 'p-4');
+        sidebar.classList.add('w-0', 'p-0');
+        mainContent.classList.remove('flex-1');
+        mainContent.classList.add('w-full');
+      } else {
+        sidebar.classList.remove('w-0', 'p-0');
+        sidebar.classList.add('w-60', 'p-4');
+        mainContent.classList.remove('w-full');
+        mainContent.classList.add('flex-1');
+      }
+      isHidden = !isHidden;
+    });
+  </script>
+
+  </body>
+</html>
