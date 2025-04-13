@@ -10,4 +10,8 @@ db.sqlite3
 *.idea/
 *.vscode/
 venv/
+<<<<<<< HEAD
 .venv
+=======
+.venv
+>>>>>>> 2a9e175b35bcf61f7d961312b504b6a7e54f9501

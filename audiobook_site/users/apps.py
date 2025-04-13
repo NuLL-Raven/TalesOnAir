@@ -5,3 +5,4 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         import users.signals  # This connects the signals to the app
+
