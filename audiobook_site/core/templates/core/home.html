@@ -134,7 +134,7 @@
         {% endif %}
         <p class="font-semibold text-[#f5f0eb]">{{ audio.title }}</p>
         <p class="text-sm text-[#a09387]">{{ audio.artist }}</p>
-        <button class="play-audio-btn text-[#c4a381]" data-audio-url="{{ audio.audio_file.url }}" data-title="{{ audio.title }}" data-artist="{{ audio.artist }}" data-image="{{ audio.image_file.url }}">
+        <button class="play-audio-btn text-[#c4a381]" data-audio-url="{{ audio.audio_file.url }}" data-title="{{ audio.title }}" data-artist="{{ audio.artist }}" data-image="{{ audio.image.url }}">
           Play Audio
         </button>
       </div>
