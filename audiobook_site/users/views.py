@@ -105,7 +105,7 @@ def format_time(seconds):
 
 @login_required
 def profile_view(request):
-    profile = request.user.profile
+    profile, created = Profile.objects.get_or_create(user=request.user)
     total_listening_time = profile.total_listening_time
 
     hours = total_listening_time // 3600
@@ -126,12 +126,14 @@ def profile_view(request):
 
 @login_required
 def get_completed_count(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
     count = request.user.profile.completed_audiobooks.count()
     return JsonResponse({'count': count})
 
 
 @login_required
 def edit_profile(request):
+    user_profile, created = Profile.objects.get_or_create(user=request.user)
     user_profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -156,7 +158,7 @@ def update_listening_time(request):
             print(f"Received update: {seconds} seconds, audiobook: {audiobook_id}")  # Debug log
 
             if request.user.is_authenticated:
-                profile = request.user.profile
+                profile, created = Profile.objects.get_or_create(user=request.user)
                 profile.total_listening_time += seconds
                 profile.save()
 
@@ -188,7 +190,7 @@ def update_listening_time(request):
 
 @login_required
 def user_library(request):
-    profile = request.user.profile
+    profile, created = Profile.objects.get_or_create(user=request.user)
     completed_books = profile.completed_audiobooks.all()
 
     context = {

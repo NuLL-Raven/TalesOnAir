@@ -23,9 +23,7 @@
       margin-left: 0 !important;
       width: 100% !important;
     }
-    .dropdown-content {
-      display: none;
-    }
+
     .dropdown-open .dropdown-content {
       display: block;
     }
@@ -126,10 +124,14 @@
 
       <section class="mb-10">
   <h3 class="text-xl font-semibold mb-4 text-[#d1b49b]">Your Daily Mixes</h3>
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-4">
     {% for audio in audio_files %}
       <div class="bg-gradient-to-b from-[#1e1e1e] to-[#2c2c2c] p-4 rounded-lg hover:from-[#2a2a2a] hover:to-[#3a3a3a] transition-all border border-gray-800">
-        <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        {% if audio.image %}
+          <img src="{{ audio.image.url }}" alt="{{ audio.title }}" class="h-32 w-full object-cover rounded mb-2" />
+        {% else %}
+          <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        {% endif %}
         <p class="font-semibold text-[#f5f0eb]">{{ audio.title }}</p>
         <p class="text-sm text-[#a09387]">{{ audio.artist }}</p>
         <button class="play-audio-btn text-[#c4a381]" data-audio-url="{{ audio.audio_file.url }}" data-title="{{ audio.title }}" data-artist="{{ audio.artist }}" data-image="{{ audio.image_file.url }}">
@@ -145,7 +147,11 @@
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-4">
     {% for i in mix_range %}
       <div class="bg-gradient-to-b from-[#1e1e1e] to-[#2c2c2c] p-4 rounded-lg hover:from-[#2a2a2a] hover:to-[#3a3a3a] transition-all border border-gray-800">
-        <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        {% if audio.image_file %}
+          <img src="{{ audio.image.url }}" alt="{{ audio.title }}" class="h-32 w-full object-cover rounded mb-2" />
+        {% else %}
+          <div class="h-32 bg-gray-700 rounded mb-2"></div>
+        {% endif %}
         <p class="font-semibold text-white">Audiobook {{ i }}</p>
         <p class="text-sm text-gray-400">Narrator Name</p>
       </div>
