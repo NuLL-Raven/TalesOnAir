@@ -38,7 +38,8 @@ git clone https://github.com/NuLL-Raven/TalesOnAir.git
 2. **Navigate to the project directory**:
 
 ```bash
-cd audiobook-site
+cd TalesOnAir
+cd audiobook_site
 ```
 
 3. **Create a virtual environment**:
